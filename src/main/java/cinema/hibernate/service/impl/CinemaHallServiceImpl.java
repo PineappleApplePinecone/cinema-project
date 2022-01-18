@@ -1,16 +1,19 @@
 package cinema.hibernate.service.impl;
 
 import cinema.hibernate.dao.CinemaHallDao;
-import cinema.hibernate.lib.Inject;
-import cinema.hibernate.lib.Service;
+import cinema.hibernate.exception.DataProcessingException;
 import cinema.hibernate.model.CinemaHall;
 import cinema.hibernate.service.CinemaHallService;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CinemaHallServiceImpl implements CinemaHallService {
-    @Inject
-    private CinemaHallDao cinemaHallDao;
+    private final CinemaHallDao cinemaHallDao;
+
+    public CinemaHallServiceImpl(CinemaHallDao cinemaHallDao) {
+        this.cinemaHallDao = cinemaHallDao;
+    }
 
     @Override
     public CinemaHall add(CinemaHall cinemaHall) {
@@ -19,7 +22,8 @@ public class CinemaHallServiceImpl implements CinemaHallService {
 
     @Override
     public CinemaHall get(Long id) {
-        return cinemaHallDao.get(id).get();
+        return cinemaHallDao.get(id).orElseThrow(
+                () -> new DataProcessingException("Can't get cinema hall by id " + id));
     }
 
     @Override
